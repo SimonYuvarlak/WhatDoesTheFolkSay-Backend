@@ -56,7 +56,8 @@ namespace SentimentAnalysis
             //END OF ML
             
             
-            //Create graph with the precessed and classified data
+            //Get the numeric results
+            Console.WriteLine($"Confidence is {Tweets.ConfidencePercentage()}%");
             
             
             //END OF GRAPH
