@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML;
 using System;
+using System.Threading;
 using Tweetinvi;
 using System.Threading.Tasks;
 
@@ -7,16 +8,20 @@ namespace SentimentAnalysis
 {
     class Program
     {
+        
         static async Task Main(string[] args)
         {
             //TWITTER API
             
+            Console.WriteLine("Main thread execution has started.");
+            
             string query;
             Console.Write("Enter a query - ");
             query = Console.ReadLine();
+            
             await TwitterApi.TwitterApiMethod(query);
-
             //END OF TWITTER API
+            
             
             
             //ML

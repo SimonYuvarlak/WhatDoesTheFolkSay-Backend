@@ -1,4 +1,5 @@
 using Tweetinvi;
+using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,11 @@ namespace SentimentAnalysis
 {
     public static class TwitterApi
     {
+        public static DateTime Start = DateTime.Now;
         public static async Task TwitterApiMethod(string query)
         {
+            Console.WriteLine("New thread execution has started.");
+
             // we create a client with your user's credentials
             var userClient = new TwitterClient(Constants.apiKey, Constants.apiSecretKey, Constants.accessToken, Constants.accessTokenSecret);
 
@@ -26,7 +30,10 @@ namespace SentimentAnalysis
 
             stream.MatchingTweetReceived += (sender, eventReceived) =>
             {
-                if (index == 100)
+                DateTime end = DateTime.Now;
+                var result = end.Subtract(Start).TotalMinutes;
+                Console.WriteLine(result);
+                if (index == 100 || result >= 1.0)
                 {
                     stream.Stop();
                     Console.WriteLine("Tweet retrieval process has finished.");
