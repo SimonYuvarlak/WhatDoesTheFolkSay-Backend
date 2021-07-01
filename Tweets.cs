@@ -47,6 +47,27 @@ namespace SentimentAnalysis
             return (int) (TotalAverage() * 100);   
         }
         
+        //Method for the confidence result as text based on the percentage
+        public static string ConfidenceText()
+        {
+            int percentage = ConfidencePercentage();
+            
+            switch (percentage)
+            {
+                case int p when p < 50:
+                    return "negative";
+                    break;
+                case int p when p >= 50 && p <= 70:
+                    return "neutral";
+                    break;
+                case int p when p > 70:
+                    return "positive";
+                    break;
+            }
+
+            return "could not found";
+        }
+        
         //Get the percentage of the subarray
         public static int SubConfidencePercentage(List<Tweet> item)
         {
