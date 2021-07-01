@@ -33,7 +33,8 @@ namespace SentimentAnalysis
                     return;
                 }
                 
-                Tweets.HundredTweets[index] = eventReceived.Tweet.FullText;
+                Tweets.HundredTweets.Add(eventReceived.Tweet.FullText);;
+                Console.WriteLine("Tweet retrieved " + index);
                 index++;
             };
 
