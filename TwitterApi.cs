@@ -2,6 +2,7 @@ using Tweetinvi;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Tweetinvi.Models;
 
 namespace SentimentAnalysis
 {
@@ -17,6 +18,10 @@ namespace SentimentAnalysis
             var stream = userClient.Streams.CreateFilteredStream();
             stream.AddTrack(query);
             
+            //Temporary English Language filter for bugless development process
+            stream.AddLanguageFilter(LanguageFilter.English); 
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+            
             int index = 0;
 
             stream.MatchingTweetReceived += (sender, eventReceived) =>
@@ -27,11 +32,8 @@ namespace SentimentAnalysis
                     Console.WriteLine("Tweet retrieval process has finished.");
                     return;
                 }
-
-                // Console.WriteLine(eventReceived.Tweet.FullText);
+                
                 Tweets.HundredTweets[index] = eventReceived.Tweet.FullText;
-                // Console.WriteLine(Tweets.HundredTweets[index]);
-                // Console.WriteLine(index);
                 index++;
             };
 

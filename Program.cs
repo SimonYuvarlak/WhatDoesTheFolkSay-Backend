@@ -9,6 +9,18 @@ namespace SentimentAnalysis
     {
         static async Task Main(string[] args)
         {
+            //TWITTER API
+            
+            string query;
+            Console.Write("Enter a query - ");
+            query = Console.ReadLine();
+            await TwitterApi.TwitterApiMethod(query);
+
+            //END OF TWITTER API
+            
+            
+            //ML
+            
             var context = new MLContext();
         
             var data = context.Data.LoadFromTextFile<SentimentData>("stock_data.csv", hasHeader: true, separatorChar: ',', allowQuoting: true);
@@ -20,40 +32,56 @@ namespace SentimentAnalysis
             var model = pipeline.Fit(data);
         
             var predictionEngine = context.Model.CreatePredictionEngine<SentimentData, SentimentPrediction>(model);
-        
-            var prediction = predictionEngine.Predict(new SentimentData { Text = "I would buy MSFT shares." });
-        
-            Console.WriteLine($"Prediction - {prediction.Prediction} with probability - {prediction.Probability}");
-        
-            var newPrediction = predictionEngine.Predict(new SentimentData { Text = "TWTR may close at a low today." });
-        
-            Console.WriteLine($"Prediction - {newPrediction.Prediction} with probability - {newPrediction.Probability}");
-        
-            var anotherPrediction = predictionEngine.Predict(new SentimentData { Text = "TSLA is going down." });
-        
-            switch (anotherPrediction.Probability)
+
+            //tweet iteration
+            foreach (string item in Tweets.HundredTweets)
             {
-                case float p when p < .5:
-                    Console.WriteLine($"TSLA sentiment is negative with probability {p}");
-                    break;
-                case float p when p >= .5 && p <= .7:
-                    Console.WriteLine($"TSLA sentiment is neutral with probability {p}");
-                    break;
-                case float p when p > .7:
-                    Console.WriteLine($"TSLA sentiment is positive with probability {p}");
-                    break;
-                default:
-                    break;
+                //get the prediction
+                var itemPrediction = predictionEngine.Predict(new SentimentData { Text = item });
+                
+                //classify the prediction
+                switch (itemPrediction.Probability)
+                {
+                    case float p when p < .5:
+                        Tweets.HundredNegativeTweets.Add(new Tweet(){Text = item, Probability = p});
+                        break;
+                    case float p when p >= .5 && p <= .7:
+                        Tweets.HundredNeutralTweets.Add(new Tweet(){Text = item, Probability = p});
+                        break;
+                    case float p when p > .7:
+                        Tweets.HundredPositiveTweets.Add(new Tweet(){Text = item, Probability = p});
+                        break;
+                }
             }
+            //END OF ML
             
-            string query;
-            Console.Write("Enter a query - ");
-            query = Console.ReadLine();
-            await TwitterApi.TwitterApiMethod(query);
-            for (int i = 0; i < 100; i++)
-            {
-                Console.WriteLine(Tweets.HundredTweets[i]);
-            }
+            
+            //Create graph with the precessed and classified data
+            
+            
+            //END OF GRAPH
+
+
+            //print all 100 retrieved tweets 
+             // for (int i = 0; i < 100; i++)
+             // {
+             //     Console.WriteLine(Tweets.HundredTweets[i]);
+             // }
+             // Console.WriteLine("Positive tweets");
+             // foreach (var item in Tweets.HundredPositiveTweets)
+             // {
+             //     Console.WriteLine(item.Text);
+             // }
+             // Console.WriteLine("Neutral tweets");
+             // foreach (var item in Tweets.HundredNeutralTweets)
+             // {
+             //     Console.WriteLine(item.Text);
+             // }
+             // Console.WriteLine("Negative tweets");
+             // foreach (var item in Tweets.HundredNegativeTweets)
+             // {
+             //     Console.WriteLine(item.Text);
+             // }
         }
         
     }
