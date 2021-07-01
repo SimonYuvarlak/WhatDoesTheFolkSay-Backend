@@ -60,7 +60,6 @@ namespace SentimentAnalysis
             Console.WriteLine($"Confidence is {Tweets.ConfidencePercentage()}%");
             Console.WriteLine($"Folks' overall opinion is -> {Tweets.ConfidenceText()}");
             Console.WriteLine($"Percentage of positive tweets -> {Tweets.SubConfidencePercentage(Tweets.HundredPositiveTweets)}%");
-            Console.WriteLine(Tweets.HundredPositiveTweets.Count);
             Console.WriteLine($"Percentage of neutral tweets -> {Tweets.SubConfidencePercentage(Tweets.HundredNeutralTweets)}%");
             Console.WriteLine($"Percentage of negative tweets -> {Tweets.SubConfidencePercentage(Tweets.HundredNegativeTweets)}%");
             

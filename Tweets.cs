@@ -71,9 +71,12 @@ namespace SentimentAnalysis
         //Get the percentage of the subarray
         public static int SubConfidencePercentage(List<Tweet> item)
         {
-            return (int) ((item.Count / (HundredPositiveTweets.Count +
-                                        HundredNeutralTweets.Count +
-                                        HundredNegativeTweets.Count)) * 100);
+            float itemCount = item.Count;
+            float positiveCount = HundredPositiveTweets.Count;
+            float neutralCount = HundredNeutralTweets.Count;
+            float negativeCount = HundredNegativeTweets.Count;
+            var result = itemCount / (positiveCount + neutralCount + negativeCount) * 100;
+            return (int) result;
         }
     }   
 }
