@@ -45,8 +45,15 @@ namespace SentimentAnalysis
                 default:
                     break;
             }
-
-            // await TwitterApi.TwitterApiMethod();
+            
+            string query;
+            Console.Write("Enter a query - ");
+            query = Console.ReadLine();
+            await TwitterApi.TwitterApiMethod(query);
+            for (int i = 0; i < 100; i++)
+            {
+                Console.WriteLine(Tweets.HundredTweets[i]);
+            }
         }
         
     }
