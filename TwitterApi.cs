@@ -9,7 +9,7 @@ namespace SentimentAnalysis
 {
     public static class TwitterApi
     {
-        public static DateTime Start = DateTime.Now;
+        //public static DateTime Start = DateTime.Now;
         public static async Task TwitterApiMethod(string query)
         {
             // we create a client with your user's credentials
@@ -23,13 +23,20 @@ namespace SentimentAnalysis
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             
             int index = 0;
+            
+            if (Program.s_cts.IsCancellationRequested)
+            {
+                Console.WriteLine("Program has cancelled");
+                return;
+            }
 
             stream.MatchingTweetReceived += (sender, eventReceived) =>
             {
-                DateTime end = DateTime.Now;
-                var result = end.Subtract(Start).TotalMinutes;
-                Console.WriteLine(result);
-                if (index == 100 || result >= 1.0)
+                //DateTime end = DateTime.Now;
+                //var result = end.Subtract(Start).TotalMinutes;
+                //Console.WriteLine(result);
+                //if (index == 100 || result >= 1.0) 
+                if (index == 100)
                 {
                     stream.Stop();
                     Console.WriteLine("Tweet retrieval process has finished.");
@@ -41,31 +48,7 @@ namespace SentimentAnalysis
                 index++;
             };
             
-            // Action<object> action = (object obj) =>
-            // {
-            //     stream.StartMatchingAllConditionsAsync();
-            // };
-
-            //Create the task
-            //Task t1 = new Task(action, "alpha");
-            //await stream.StartMatchingAllConditionsAsync();
-            
-            //Create start date for the timer
-            // DateTime Start2 = DateTime.Now;
-            //Start the task
-            //t1.Start();
-            //Check whether one minute has passed
             await stream.StartMatchingAllConditionsAsync();
-            // DateTime End2 = DateTime.Now;
-            // while (End2.Subtract(Start2).TotalMinutes < 1.0)
-            // {
-            //     End2 = DateTime.Now;
-            //     var result = End2.Subtract(Start2).TotalMinutes;
-            //     if (result >= 1.0)
-            //     {
-            //         t1.Wait();
-            //     }
-            // }
         }
         
     }

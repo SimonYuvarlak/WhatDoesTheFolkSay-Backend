@@ -3,24 +3,58 @@ using System;
 using System.Threading;
 using Tweetinvi;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace SentimentAnalysis
 {
-    class Program
+    static class Program
     {
+        public static readonly CancellationTokenSource s_cts = new CancellationTokenSource();
+        private static CancellationToken token = s_cts.Token;
         
         static async Task Main(string[] args)
         {
             //TWITTER API
-
-            string query;
+            
             Console.Write("Enter a query - ");
-            query = Console.ReadLine();
-            
-            await TwitterApi.TwitterApiMethod(query);
+            string query = Console.ReadLine();
+            int waitTime = 0;
+            while (waitTime < 1)
+            {
+                Console.WriteLine("Maximum, how many minutes you are willing to wait for data retrieval. \n The more data we have, better result we can give to you. (Minimum 1) \n 3 minutes are recommended.");
+                string response = Console.ReadLine();
+                if (string.IsNullOrEmpty(response))
+                {
+                    Console.WriteLine("Please enter a value");
+                }
+                else
+                {
+                    waitTime = int.Parse(response);
+                }
+            }
+            try
+            {
+                s_cts.CancelAfter(waitTime * 60000);
+                try
+                {
+                    Console.WriteLine("Data retrieval has started.");
+                    Task.Run(() => TwitterApi.TwitterApiMethod(query), token).Wait(token);
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("You operation has canceled due too long time for retrieval.");
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                Console.WriteLine("\nTasks cancelled: timed out.\n");
+            }
+            finally
+            {
+                s_cts.Dispose();
+            }
+
             //END OF TWITTER API
-            
-            
             
             //ML
             
@@ -76,27 +110,7 @@ namespace SentimentAnalysis
                     $"Percentage of negative tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredNegativeTweets)}%");
 
             }
-            //print all 100 retrieved tweets 
-             // for (int i = 0; i < 100; i++)
-             // {
-             //     Console.WriteLine(Tweets.HundredTweets[i]);
-             // }
-             // Console.WriteLine("Positive tweets");
-             // foreach (var item in Tweets.HundredPositiveTweets)
-             // {
-             //     Console.WriteLine(item.Text);
-             // }
-             // Console.WriteLine("Neutral tweets");
-             // foreach (var item in Tweets.HundredNeutralTweets)
-             // {
-             //     Console.WriteLine(item.Text);
-             // }
-             // Console.WriteLine("Negative tweets");
-             // foreach (var item in Tweets.HundredNegativeTweets)
-             // {
-             //     Console.WriteLine(item.Text);
-             // }
         }
-        
+
     }
 }
