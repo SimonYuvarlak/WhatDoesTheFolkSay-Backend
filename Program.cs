@@ -12,9 +12,7 @@ namespace SentimentAnalysis
         static async Task Main(string[] args)
         {
             //TWITTER API
-            
-            Console.WriteLine("Main thread execution has started.");
-            
+
             string query;
             Console.Write("Enter a query - ");
             query = Console.ReadLine();
@@ -38,37 +36,46 @@ namespace SentimentAnalysis
         
             var predictionEngine = context.Model.CreatePredictionEngine<SentimentData, SentimentPrediction>(model);
 
-            //tweet iteration
-            foreach (string item in Tweets.HundredTweets)
+            if (Tweets.HundredTweets.Count == 0)
             {
-                //get the prediction
-                var itemPrediction = predictionEngine.Predict(new SentimentData { Text = item });
-                
-                //classify the prediction
-                switch (itemPrediction.Probability)
-                {
-                    case float p when p < .5:
-                        Tweets.HundredNegativeTweets.Add(new Tweet(){Text = item, Probability = p});
-                        break;
-                    case float p when p >= .5 && p <= .7:
-                        Tweets.HundredNeutralTweets.Add(new Tweet(){Text = item, Probability = p});
-                        break;
-                    case float p when p > .7:
-                        Tweets.HundredPositiveTweets.Add(new Tweet(){Text = item, Probability = p});
-                        break;
-                }
+                Console.WriteLine("There is no tweet we could retrieve and process waas geting too long, so the process has stopped. \n You can try later the same query or now a different query. \n We are still developing, thank you for you patience.");
             }
-            //END OF ML
-            
-            
-            //Get the numeric results
-            Console.WriteLine($"Confidence is {Tweets.ConfidencePercentage()}%");
-            Console.WriteLine($"Folks' overall opinion is -> {Tweets.ConfidenceText()}");
-            Console.WriteLine($"Percentage of positive tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredPositiveTweets)}%");
-            Console.WriteLine($"Percentage of neutral tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredNeutralTweets)}%");
-            Console.WriteLine($"Percentage of negative tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredNegativeTweets)}%");
+            else
+            {
+                //tweet iteration
+                foreach (string item in Tweets.HundredTweets)
+                {
+                    //get the prediction
+                    var itemPrediction = predictionEngine.Predict(new SentimentData {Text = item});
+
+                    //classify the prediction
+                    switch (itemPrediction.Probability)
+                    {
+                        case float p when p < .5:
+                            Tweets.HundredNegativeTweets.Add(new Tweet() {Text = item, Probability = p});
+                            break;
+                        case float p when p >= .5 && p <= .7:
+                            Tweets.HundredNeutralTweets.Add(new Tweet() {Text = item, Probability = p});
+                            break;
+                        case float p when p > .7:
+                            Tweets.HundredPositiveTweets.Add(new Tweet() {Text = item, Probability = p});
+                            break;
+                    }
+                }
+                //END OF ML
 
 
+                //Get the numeric results
+                Console.WriteLine($"Confidence is {Tweets.ConfidencePercentage()}%");
+                Console.WriteLine($"Folks' overall opinion is -> {Tweets.ConfidenceText()}");
+                Console.WriteLine(
+                    $"Percentage of positive tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredPositiveTweets)}%");
+                Console.WriteLine(
+                    $"Percentage of neutral tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredNeutralTweets)}%");
+                Console.WriteLine(
+                    $"Percentage of negative tweets -> {Tweets.SubCategoryPercentage(Tweets.HundredNegativeTweets)}%");
+
+            }
             //print all 100 retrieved tweets 
              // for (int i = 0; i < 100; i++)
              // {
